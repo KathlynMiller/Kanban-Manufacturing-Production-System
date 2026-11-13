@@ -1,0 +1,59 @@
+<!--
+  Preserved starter snapshot — this is the original Digital Kanban
+  Board layout from before the 2026-09-17/19 updates (status panel,
+  CSV wiring, batch-size warnings, start/end date fields, etc.).
+  Kept as-is because it's a clean, simple starting example. It shares
+  the live script.js/styles.css, so the board itself is fully
+  functional — only this page's header/banner markup is the original.
+  See index.html for the current version.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kanban Manufacturing System Digital Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <span class="eyebrow">Kanban Manufacturing System &middot; Prototype &middot; Leads-only access</span>
+    <h1>Digital Kanban Board</h1>
+    <p>A working prototype of the digital board discussed at the Phase 1 kickoff &mdash; card selector, per-phase start/stop timestamps, time-in-limbo tracking, problem notes, and status colors are all wired up below.</p>
+  </header>
+
+  <div class="banner">
+    <strong>Unconfirmed:</strong> the 10-column sequence below came out of the kickoff as a list, not a confirmed order &mdash; it reorders Production ahead of To Do and adds Deflash Queue, Final Inspection Queue, and Packaging versus the physical 7-stage board. Validate with Kanban Manufacturing System before this becomes the real schema.
+  </div>
+
+  <div class="toolbar">
+    <label class="selector-label">
+      Currently working on
+      <select id="card-selector"><option value="">— none —</option></select>
+    </label>
+
+    <div class="legend">
+      <span class="legend-item"><span class="dot" style="background:#2f7a52"></span>In Process</span>
+      <span class="legend-item"><span class="dot" style="background:#c9a13b"></span>Waiting for Material</span>
+      <span class="legend-item"><span class="dot" style="background:#8a5a9a"></span>Rework</span>
+      <span class="legend-item"><span class="dot" style="background:#5a6c8a"></span>Hold</span>
+      <span class="legend-item"><span class="dot" style="background:#8a5044"></span>Cancelled</span>
+    </div>
+  </div>
+
+  <form id="add-task-form">
+    <input type="text" id="new-so" placeholder="SO number (e.g. SO-7900)" required>
+    <input type="text" id="new-part-number" placeholder="Part number">
+    <input type="text" id="new-part-family" placeholder="Part family">
+    <input type="number" id="new-quantity" placeholder="Quantity" min="0">
+    <input type="date" id="new-due-date" required>
+    <button type="submit">Add order to Back Log</button>
+  </form>
+
+  <main id="board"></main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<title>Kanban Manufacturing System Ops Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root {
+    --paper: #EAEDE8;
+    --paper-raised: #F5F7F3;
+    --ink: #1B2226;
+    --ink-soft: #4A5459;
+    --ink-muted: #7A8580;
+    --steel: #5B6B72;
+    --steel-line: #C3CBC6;
+    --amber: #B96A19;
+    --amber-soft: #F1DEC4;
+    --card-border: #C9D0CA;
+    --shadow: 0 1px 2px rgba(27, 34, 38, 0.08);
+
+    --s1: #3C6E9E;
+    --good: #2F7A52;
+    --good-soft: #DCEAE0;
+    --critical: #B23A2B;
+    --critical-soft: #F3DAD5;
+    --warning: #B96A19;
+    --warning-soft: #F1DEC4;
+    --done: #6E7D77;
+    --done-soft: #E2E6E2;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1A1F22;
+      --paper-raised: #22282B;
+      --ink: #E8EBE7;
+      --ink-soft: #A9B2AD;
+      --ink-muted: #7C8985;
+      --steel: #8B9A93;
+      --steel-line: #3A4448;
+      --amber: #E0954A;
+      --amber-soft: #3A2F1F;
+      --card-border: #354045;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+      --s1: #6C9BCB;
+      --good: #5FBE86;
+      --good-soft: #1E332A;
+      --critical: #E3806B;
+      --critical-soft: #3A241F;
+      --warning: #E0954A;
+      --warning-soft: #3A2F1F;
+      --done: #8B9A93;
+      --done-soft: #2A302E;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #1A1F22;
+    --paper-raised: #22282B;
+    --ink: #E8EBE7;
+    --ink-soft: #A9B2AD;
+    --ink-muted: #7C8985;
+    --steel: #8B9A93;
+    --steel-line: #3A4448;
+    --amber: #E0954A;
+    --amber-soft: #3A2F1F;
+    --card-border: #354045;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+    --s1: #6C9BCB;
+    --good: #5FBE86;
+    --good-soft: #1E332A;
+    --critical: #E3806B;
+    --critical-soft: #3A241F;
+    --warning: #E0954A;
+    --warning-soft: #3A2F1F;
+    --done: #8B9A93;
+    --done-soft: #2A302E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    padding: clamp(1.25rem, 3.5vw, 3rem);
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--steel-line);
+    padding-bottom: clamp(1.1rem, 3vw, 1.75rem);
+  }
+
+  h1 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.1rem, 5.2vw, 3.1rem);
+    line-height: 0.95;
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  header p {
+    max-width: 68ch;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  section h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin: 0 0 0.9rem;
+  }
+
+  /* ---------- KPI tiles ---------- */
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .kpi-row.secondary {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    max-width: 620px;
+  }
+
+  .tile {
+    background: var(--paper-raised);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 0.95rem 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border-left: 3px solid var(--card-border);
+  }
+
+  .tile.status-critical { border-left-color: var(--critical); }
+  .tile.status-warning { border-left-color: var(--warning); }
+
+  .tile-label {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .tile-value {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1;
+    font-variant-numeric: proportional-nums;
+  }
+
+  .tile-note {
+    font-size: 0.74rem;
+    color: var(--ink-muted);
+  }
+
+  /* status shape markers: circle / triangle / diamond */
+  .mark { flex-shrink: 0; width: 9px; height: 9px; }
+  .mark.good { border-radius: 50%; background: var(--good); }
+  .mark.critical { background: var(--critical); transform: rotate(45deg); }
+  .mark.warning {
+    width: 0; height: 0; background: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 9px solid var(--warning);
+  }
+  .mark.done { background: var(--done); border-radius: 1px; }
+
+  /* ---------- meter ---------- */
+
+  .meter-tile { grid-column: span 1; }
+  .meter-track {
+    position: relative;
+    height: 10px;
+    border-radius: 5px;
+    background: var(--critical-soft);
+    overflow: hidden;
+    margin-top: 0.3rem;
+  }
+  .meter-fill {
+    position: absolute;
+    inset: 0;
+    width: var(--pct);
+    background: var(--critical);
+    border-radius: 5px;
+  }
+
+  /* ---------- charts ---------- */
+
+  .chart-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.4rem 1.4rem;
+  }
+
+  .chart-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0 0.2rem;
+  }
+
+  .chart-sub {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin: 0 0 1rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 118px 1fr 46px;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .bar-cat {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  .stack {
+    display: flex;
+    gap: 2px;
+    height: 20px;
+    background: var(--paper);
+    border-radius: 0 4px 4px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .seg {
+    height: 100%;
+    outline: none;
+    cursor: default;
+  }
+  .seg.good { background: var(--good); }
+  .seg.critical { background: var(--critical); }
+  .seg.warning { background: var(--warning); }
+  .seg.done { background: var(--done); }
+  .seg:hover, .seg:focus-visible { filter: brightness(1.12); }
+
+  .bar-total {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gridline-axis {
+    display: grid;
+    grid-template-columns: 118px 1fr 46px;
+    gap: 0.7rem;
+    margin-top: 0.35rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-muted);
+  }
+  .gridline-axis .ticks {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .single-bar-row {
+    display: grid;
+    grid-template-columns: 132px 1fr 76px;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .single-bar-track {
+    height: 18px;
+    background: var(--paper);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .single-bar-fill {
+    height: 100%;
+    background: var(--s1);
+    border-radius: 0 4px 4px 0;
+    min-width: 3px;
+    outline: none;
+    cursor: default;
+  }
+  .single-bar-fill:hover, .single-bar-fill:focus-visible { filter: brightness(1.12); }
+
+  /* ---------- table view ---------- */
+
+  details.table-toggle {
+    margin-top: 1rem;
+  }
+  details.table-toggle summary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--steel);
+    cursor: pointer;
+    user-select: none;
+  }
+  details.table-toggle table {
+    margin-top: 0.7rem;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.8rem;
+  }
+  details.table-toggle th, details.table-toggle td {
+    text-align: left;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--card-border);
+    font-variant-numeric: tabular-nums;
+  }
+  details.table-toggle th {
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- due this week table ---------- */
+
+  .list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .list-table th, .list-table td {
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .list-table th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .list-table td.num { font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+
+  /* ---------- tooltip ---------- */
+
+  #tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.76rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 5px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    z-index: 20;
+    max-width: 220px;
+  }
+  #tooltip.show { opacity: 1; transform: translateY(0); }
+  #tooltip strong { font-weight: 700; }
+
+  footer {
+    border-top: 1px solid var(--steel-line);
+    padding-top: 1.1rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 70ch;
+  }
+  footer strong { color: var(--ink); }
+
+  @media (max-width: 620px) {
+    .bar-row, .single-bar-row { grid-template-columns: 88px 1fr 40px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #tooltip { transition: none; }
+  }
+</style>
+
+<div class="page">
+  <header>
+    <span class="eyebrow">Kanban Manufacturing System &middot; Sample Executive Dashboard</span>
+    <h1>Kanban Ops Dashboard</h1>
+    <p>A working mock-up of the KPIs and visuals the Power BI dashboard should surface, built against the sample <code>OpenOrders.csv</code> / <code>PhaseLog.csv</code> data set (11 cards across the confirmed 10-stage sequence). Swap in Kanban Manufacturing System's real Excel/Open Order export and every number here updates the same way in Power BI.</p>
+    <p style="font-size:0.82rem; color:var(--ink-muted); margin-top:0.3rem;">Confirmed at the Phase 1 kickoff: one dashboard, role-based views &mdash; Operators track phases, Floor Supervisors focus on making the part, Executives use it to decide changes. Refresh goal is real-time. Access is <strong>Leads only</strong> for now, until the digital board is validated against the physical one. Digital-board sequence confirmed 2026-09-17.</p>
+  </header>
+
+  <section>
+    <h2>Headline KPIs</h2>
+    <div class="kpi-row">
+      <div class="tile">
+        <span class="tile-label">Total orders</span>
+        <span class="tile-value">11</span>
+        <span class="tile-note">All cards, Back Log through Shipped</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Work in process</span>
+        <span class="tile-value">8</span>
+        <span class="tile-note">Production through Awaiting Ship</span>
+      </div>
+      <div class="tile status-critical">
+        <span class="tile-label"><span class="mark critical"></span>Overdue orders</span>
+        <span class="tile-value">3</span>
+        <span class="tile-note">Past due date, not yet Shipped</span>
+      </div>
+      <div class="tile status-warning">
+        <span class="tile-label"><span class="mark warning"></span>Due this week</span>
+        <span class="tile-value">7</span>
+        <span class="tile-note">Next 7 days, not yet Shipped</span>
+      </div>
+      <div class="tile meter-tile">
+        <span class="tile-label"><span class="mark critical"></span>Percent overdue</span>
+        <span class="tile-value">30%</span>
+        <div class="meter-track"><div class="meter-fill" style="--pct: 30%"></div></div>
+        <span class="tile-note">Of 10 non-Shipped orders</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Avg. days until due</span>
+        <span class="tile-value">1.5</span>
+        <span class="tile-note">Across open orders (negative = overdue)</span>
+      </div>
+    </div>
+    <div class="kpi-row secondary" style="margin-top: 0.9rem;">
+      <div class="tile">
+        <span class="tile-label"><span class="mark done"></span>Shipped orders</span>
+        <span class="tile-value">1</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Cancelled orders</span>
+        <span class="tile-value">1</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Total quantity</span>
+        <span class="tile-value">63,700</span>
+        <span class="tile-note">Units across all orders</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Production timing &amp; status &mdash; confirmed at kickoff</h2>
+    <div class="kpi-row">
+      <div class="tile">
+        <span class="tile-label">Weekly volume</span>
+        <span class="tile-value">~10</span>
+        <span class="tile-note">Orders/week &mdash; keep this view concise, not dense</span>
+      </div>
+      <div class="tile status-warning">
+        <span class="tile-label"><span class="mark warning"></span>Cycle-time overdue</span>
+        <span class="tile-value">5</span>
+        <span class="tile-note">Target is 4&ndash;5 days full production; separate from due-date overdue &mdash; from <code>PhaseLog.csv</code>'s earliest logged start per card</span>
+      </div>
+      <div class="tile status-warning">
+        <span class="tile-label"><span class="mark warning"></span>Deflash flagged</span>
+        <span class="tile-value">2</span>
+        <span class="tile-note">Deflash Queue/Deflash cards in Rework or Hold</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Avg. time in limbo</span>
+        <span class="tile-value">5m</span>
+        <span class="tile-note">Idle time between phases &mdash; placeholder timestamps in the sample data; real values will widen once Kanban Manufacturing System's timing data is loaded</span>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-top:0.9rem;">
+      <h3 class="chart-title">Production status colors</h3>
+      <p class="chart-sub">Applies at any stage &mdash; on top of the 10-stage confirmed flow.</p>
+      <div class="legend" style="margin-bottom:0;">
+        <span class="legend-item"><span class="mark" style="width:9px;height:9px;border-radius:50%;background:#c9a13b;"></span>Waiting for Raw Material</span>
+        <span class="legend-item"><span class="mark" style="width:9px;height:9px;border-radius:50%;background:var(--good);"></span>In Process</span>
+        <span class="legend-item"><span class="mark" style="width:9px;height:9px;border-radius:50%;background:#8a5a9a;"></span>Rework</span>
+        <span class="legend-item"><span class="mark" style="width:9px;height:9px;border-radius:50%;background:#5a6c8a;"></span>Hold</span>
+        <span class="legend-item"><span class="mark" style="width:9px;height:9px;border-radius:50%;background:#8a5044;"></span>Cancelled</span>
+        <span class="legend-item"><span class="mark critical"></span>Delay</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="chart-card">
+      <h3 class="chart-title">Orders by stage</h3>
+      <p class="chart-sub">Card count per stage of the confirmed 10-stage sequence, split by On Track / Overdue / Cancelled / Shipped.</p>
+      <div class="legend">
+        <span class="legend-item"><span class="mark good"></span>On track</span>
+        <span class="legend-item"><span class="mark critical"></span>Overdue</span>
+        <span class="legend-item"><span class="mark warning"></span>Cancelled</span>
+        <span class="legend-item"><span class="mark done"></span>Shipped</span>
+      </div>
+
+      <div class="bars" id="stage-bars">
+        <div class="bar-row">
+          <span class="bar-cat">Back Log</span>
+          <div class="stack">
+            <div class="seg good" style="width:50%" tabindex="0" data-cat="Back Log" data-series="On Track" data-value="1"></div>
+            <div class="seg warning" style="width:50%" tabindex="0" data-cat="Back Log" data-series="Cancelled" data-value="1"></div>
+          </div>
+          <span class="bar-total">2</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Production</span>
+          <div class="stack">
+            <div class="seg good" style="width:100%" tabindex="0" data-cat="Production" data-series="On Track" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Deflash Queue</span>
+          <div class="stack">
+            <div class="seg good" style="width:100%" tabindex="0" data-cat="Deflash Queue" data-series="On Track" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Deflash</span>
+          <div class="stack">
+            <div class="seg good" style="width:100%" tabindex="0" data-cat="Deflash" data-series="On Track" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">To Do</span>
+          <div class="stack">
+            <div class="seg good" style="width:100%" tabindex="0" data-cat="To Do" data-series="On Track" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Final Inspection Queue</span>
+          <div class="stack">
+            <div class="seg good" style="width:100%" tabindex="0" data-cat="Final Inspection Queue" data-series="On Track" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Final Inspection</span>
+          <div class="stack">
+            <div class="seg critical" style="width:100%" tabindex="0" data-cat="Final Inspection" data-series="Overdue" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Packaging</span>
+          <div class="stack">
+            <div class="seg critical" style="width:100%" tabindex="0" data-cat="Packaging" data-series="Overdue" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Awaiting Ship</span>
+          <div class="stack">
+            <div class="seg critical" style="width:100%" tabindex="0" data-cat="Awaiting Ship" data-series="Overdue" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-cat">Shipped</span>
+          <div class="stack">
+            <div class="seg done" style="width:100%" tabindex="0" data-cat="Shipped" data-series="Shipped" data-value="1"></div>
+          </div>
+          <span class="bar-total">1</span>
+        </div>
+      </div>
+      <div class="gridline-axis">
+        <span></span>
+        <span class="ticks"><span>0</span><span>1</span><span>2</span></span>
+        <span></span>
+      </div>
+
+      <details class="table-toggle">
+        <summary>View as table</summary>
+        <table>
+          <thead><tr><th>Stage</th><th>On Track</th><th>Overdue</th><th>Cancelled</th><th>Shipped</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Back Log</td><td>1</td><td>0</td><td>1</td><td>&ndash;</td><td>2</td></tr>
+            <tr><td>Production</td><td>1</td><td>0</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Deflash Queue</td><td>1</td><td>0</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Deflash</td><td>1</td><td>0</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>To Do</td><td>1</td><td>0</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Final Inspection Queue</td><td>1</td><td>0</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Final Inspection</td><td>0</td><td>1</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Packaging</td><td>0</td><td>1</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Awaiting Ship</td><td>0</td><td>1</td><td>0</td><td>&ndash;</td><td>1</td></tr>
+            <tr><td>Shipped</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.72rem; color:var(--ink-muted); margin-top:0.5rem;">Computed as of 2026-09-15, matching the sample <code>PhaseLog.csv</code> timestamps.</p>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <div class="chart-card">
+      <h3 class="chart-title">Quantity by part family</h3>
+      <p class="chart-sub">Total units on order, across all stages, grouped by part family.</p>
+
+      <div class="bars" id="family-bars">
+        <div class="single-bar-row">
+          <span class="bar-cat">Passive Component</span>
+          <div class="single-bar-track"><div class="single-bar-fill" style="width:100%" tabindex="0" data-cat="Passive Component" data-value="34,000 units"></div></div>
+          <span class="bar-total">34,000</span>
+        </div>
+        <div class="single-bar-row">
+          <span class="bar-cat">Housing</span>
+          <div class="single-bar-track"><div class="single-bar-fill" style="width:50.7%" tabindex="0" data-cat="Housing" data-value="17,250 units"></div></div>
+          <span class="bar-total">17,250</span>
+        </div>
+        <div class="single-bar-row">
+          <span class="bar-cat">Bracket</span>
+          <div class="single-bar-track"><div class="single-bar-fill" style="width:27.1%" tabindex="0" data-cat="Bracket" data-value="9,200 units"></div></div>
+          <span class="bar-total">9,200</span>
+        </div>
+        <div class="single-bar-row">
+          <span class="bar-cat">Boot</span>
+          <div class="single-bar-track"><div class="single-bar-fill" style="width:7.1%" tabindex="0" data-cat="Boot" data-value="2,400 units"></div></div>
+          <span class="bar-total">2,400</span>
+        </div>
+        <div class="single-bar-row">
+          <span class="bar-cat">Fastener Kit</span>
+          <div class="single-bar-track"><div class="single-bar-fill" style="width:2.5%" tabindex="0" data-cat="Fastener Kit" data-value="850 units"></div></div>
+          <span class="bar-total">850</span>
+        </div>
+      </div>
+      <div class="gridline-axis">
+        <span></span>
+        <span class="ticks"><span>0</span><span>10k</span><span>20k</span><span>30k</span></span>
+        <span></span>
+      </div>
+
+      <details class="table-toggle">
+        <summary>View as table</summary>
+        <table>
+          <thead><tr><th>Part Family</th><th>Quantity</th></tr></thead>
+          <tbody>
+            <tr><td>Passive Component</td><td>34,000</td></tr>
+            <tr><td>Housing</td><td>17,250</td></tr>
+            <tr><td>Bracket</td><td>9,200</td></tr>
+            <tr><td>Boot</td><td>2,400</td></tr>
+            <tr><td>Fastener Kit</td><td>850</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <h2>Due this week</h2>
+    <div class="chart-card">
+      <div class="table-wrap">
+        <table class="list-table">
+          <thead>
+            <tr><th>Card #</th><th>SO #</th><th>Part Number</th><th>Part Family</th><th>Qty</th><th>Due Date</th><th>Stage</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>106</td><td>SO-7830</td><td>BT-40</td><td>Boot</td><td class="num">1,500</td><td>2026-09-15</td><td>Final Inspection Queue</td><td>In Process</td></tr>
+            <tr><td>105</td><td>SO-7825</td><td>100125060</td><td>Housing</td><td class="num">8,000</td><td>2026-09-16</td><td>To Do</td><td>In Process</td></tr>
+            <tr><td>104</td><td>SO-7818</td><td>PC-114</td><td>Passive Component</td><td class="num">12,000</td><td>2026-09-17</td><td>Deflash</td><td>Rework</td></tr>
+            <tr><td>103</td><td>SO-7812</td><td>BR-2210</td><td>Bracket</td><td class="num">3,000</td><td>2026-09-18</td><td>Deflash Queue</td><td>Hold</td></tr>
+            <tr><td>102</td><td>SO-7809</td><td>M30.008A01</td><td>Housing</td><td class="num">250</td><td>2026-09-19</td><td>Production</td><td>In Process</td></tr>
+            <tr><td>111</td><td>SO-7705</td><td>BT-40</td><td>Boot</td><td class="num">900</td><td>2026-09-20</td><td>Back Log</td><td>Cancelled</td></tr>
+            <tr><td>101</td><td>SO-7801</td><td>100125060</td><td>Housing</td><td class="num">5,000</td><td>2026-09-22</td><td>Back Log</td><td>Waiting for Raw Material</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Data:</strong> sample set (<code>data/OpenOrders.csv</code>, <code>data/PhaseLog.csv</code>), computed as of 2026-09-15. <strong>Sequence:</strong> the confirmed 10-stage digital-board flow (<code>data/StageOrder.csv</code>), locked in at the Phase 1 kickoff follow-up on 2026-09-17 &mdash; see <code>ProcessFlowDiagram.html</code> for both the physical and digital flows. <strong>Timing/status:</strong> Status, Notes, the Deflash flag, and per-phase Start/Stop timestamps are now wired to real fields via <code>PowerQuery.m</code> &mdash; the Cycle-time-overdue and time-in-limbo tiles above read from the new <code>PhaseLog</code> table. <strong>KPIs:</strong> mirror the definitions in <code>Measures.dax</code> exactly, so building the real report in Power BI Desktop should reproduce these same numbers once the real data is loaded. Replace the sample CSVs with Kanban Manufacturing System's actual Open Order and timestamp exports before presenting this to stakeholders.
+  </footer>
+</div>
+
+<div id="tooltip" role="tooltip"></div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+
+  function showTooltip(el, x, y) {
+    const cat = el.getAttribute('data-cat');
+    const series = el.getAttribute('data-series');
+    const value = el.getAttribute('data-value');
+    tooltip.innerHTML = '';
+    const catLine = document.createElement('div');
+    catLine.textContent = cat;
+    const valLine = document.createElement('div');
+    const strong = document.createElement('strong');
+    strong.textContent = value + (series ? '' : '');
+    valLine.appendChild(strong);
+    if (series) {
+      valLine.appendChild(document.createTextNode(' — ' + series));
+    }
+    tooltip.appendChild(catLine);
+    tooltip.appendChild(valLine);
+    tooltip.style.left = Math.min(x + 12, window.innerWidth - 240) + 'px';
+    tooltip.style.top = (y + 14) + 'px';
+    tooltip.classList.add('show');
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('show');
+  }
+
+  document.querySelectorAll('.seg, .single-bar-fill').forEach((el) => {
+    el.addEventListener('pointermove', (e) => showTooltip(el, e.clientX, e.clientY));
+    el.addEventListener('pointerenter', (e) => showTooltip(el, e.clientX, e.clientY));
+    el.addEventListener('pointerleave', hideTooltip);
+    el.addEventListener('focus', () => {
+      const rect = el.getBoundingClientRect();
+      showTooltip(el, rect.left, rect.top);
+    });
+    el.addEventListener('blur', hideTooltip);
+  });
+</script>

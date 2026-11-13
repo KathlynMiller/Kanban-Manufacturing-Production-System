@@ -1,0 +1,179 @@
+[
+  {
+    "id": 101,
+    "so": "SO-7801",
+    "partNumber": "100125060",
+    "partFamily": "Housing",
+    "quantity": 5000,
+    "dueDate": "2026-09-22",
+    "stage": "backlog",
+    "status": "waiting-material",
+    "notes": "",
+    "phaseLog": { "backlog": { "start": "2026-09-15T08:02:00", "stop": null } }
+  },
+  {
+    "id": 102,
+    "so": "SO-7809",
+    "partNumber": "M30.008A01",
+    "partFamily": "Housing",
+    "quantity": 250,
+    "dueDate": "2026-09-19",
+    "stage": "production",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-14T07:40:00", "stop": "2026-09-15T09:10:00" },
+      "production": { "start": "2026-09-15T09:15:00", "stop": null }
+    }
+  },
+  {
+    "id": 103,
+    "so": "SO-7812",
+    "partNumber": "BR-2210",
+    "partFamily": "Bracket",
+    "quantity": 3000,
+    "dueDate": "2026-09-18",
+    "stage": "deflash-queue",
+    "status": "hold",
+    "notes": "Waiting on lead sign-off before deflash — flash pattern looked off on first piece.",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-13T08:00:00", "stop": "2026-09-14T08:30:00" },
+      "production": { "start": "2026-09-14T08:35:00", "stop": "2026-09-16T10:00:00" }
+    }
+  },
+  {
+    "id": 104,
+    "so": "SO-7818",
+    "partNumber": "PC-114",
+    "partFamily": "Passive Component",
+    "quantity": 12000,
+    "dueDate": "2026-09-17",
+    "stage": "deflash",
+    "status": "rework",
+    "notes": "Excess flash on batch 2 — sent back for a second pass.",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-12T08:00:00", "stop": "2026-09-12T13:00:00" },
+      "production": { "start": "2026-09-12T13:05:00", "stop": "2026-09-14T09:00:00" },
+      "deflash-queue": { "start": "2026-09-14T09:05:00", "stop": "2026-09-14T15:00:00" },
+      "deflash": { "start": "2026-09-14T15:05:00", "stop": null }
+    }
+  },
+  {
+    "id": 105,
+    "so": "SO-7825",
+    "partNumber": "100125060",
+    "partFamily": "Housing",
+    "quantity": 8000,
+    "dueDate": "2026-09-16",
+    "stage": "todo",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-10T08:00:00", "stop": "2026-09-10T14:00:00" },
+      "production": { "start": "2026-09-10T14:05:00", "stop": "2026-09-12T11:00:00" },
+      "deflash-queue": { "start": "2026-09-12T11:05:00", "stop": "2026-09-12T13:00:00" },
+      "deflash": { "start": "2026-09-12T13:05:00", "stop": "2026-09-14T16:00:00" }
+    }
+  },
+  {
+    "id": 106,
+    "so": "SO-7830",
+    "partNumber": "BT-40",
+    "partFamily": "Boot",
+    "quantity": 1500,
+    "dueDate": "2026-09-15",
+    "stage": "final-queue",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-08T08:00:00", "stop": "2026-09-08T15:00:00" },
+      "production": { "start": "2026-09-08T15:05:00", "stop": "2026-09-10T12:00:00" },
+      "deflash-queue": { "start": "2026-09-10T12:05:00", "stop": "2026-09-10T13:00:00" },
+      "deflash": { "start": "2026-09-10T13:05:00", "stop": "2026-09-11T10:00:00" },
+      "todo": { "start": "2026-09-11T10:05:00", "stop": "2026-09-13T09:00:00" }
+    }
+  },
+  {
+    "id": 107,
+    "so": "SO-7791",
+    "partNumber": "FK-9",
+    "partFamily": "Fastener Kit",
+    "quantity": 850,
+    "dueDate": "2026-09-14",
+    "stage": "final",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-05T08:00:00", "stop": "2026-09-05T12:00:00" },
+      "production": { "start": "2026-09-05T12:05:00", "stop": "2026-09-08T09:00:00" },
+      "deflash-queue": { "start": "2026-09-08T09:05:00", "stop": "2026-09-08T10:00:00" },
+      "deflash": { "start": "2026-09-08T10:05:00", "stop": "2026-09-09T14:00:00" },
+      "todo": { "start": "2026-09-09T14:05:00", "stop": "2026-09-10T09:00:00" },
+      "final-queue": { "start": "2026-09-10T09:05:00", "stop": "2026-09-11T08:00:00" },
+      "final": { "start": "2026-09-11T08:05:00", "stop": null }
+    }
+  },
+  {
+    "id": 108,
+    "so": "SO-7770",
+    "partNumber": "BR-2210",
+    "partFamily": "Bracket",
+    "quantity": 6200,
+    "dueDate": "2026-09-13",
+    "stage": "packaging",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "backlog": { "start": "2026-09-01T08:00:00", "stop": "2026-09-01T13:00:00" },
+      "production": { "start": "2026-09-01T13:05:00", "stop": "2026-09-04T10:00:00" },
+      "deflash-queue": { "start": "2026-09-04T10:05:00", "stop": "2026-09-04T11:00:00" },
+      "deflash": { "start": "2026-09-04T11:05:00", "stop": "2026-09-05T15:00:00" },
+      "todo": { "start": "2026-09-05T15:05:00", "stop": "2026-09-06T09:00:00" },
+      "final-queue": { "start": "2026-09-06T09:05:00", "stop": "2026-09-06T13:00:00" },
+      "final": { "start": "2026-09-06T13:05:00", "stop": "2026-09-08T10:00:00" },
+      "packaging": { "start": "2026-09-08T10:05:00", "stop": null }
+    }
+  },
+  {
+    "id": 109,
+    "so": "SO-7742",
+    "partNumber": "100125060",
+    "partFamily": "Housing",
+    "quantity": 4000,
+    "dueDate": "2026-09-11",
+    "stage": "awaiting-ship",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "packaging": { "start": "2026-09-06T10:00:00", "stop": "2026-09-07T09:00:00" },
+      "awaiting-ship": { "start": "2026-09-07T09:05:00", "stop": null }
+    }
+  },
+  {
+    "id": 110,
+    "so": "SO-7699",
+    "partNumber": "PC-114",
+    "partFamily": "Passive Component",
+    "quantity": 22000,
+    "dueDate": "2026-09-05",
+    "stage": "shipped",
+    "status": "in-process",
+    "notes": "",
+    "phaseLog": {
+      "awaiting-ship": { "start": "2026-09-03T09:00:00", "stop": "2026-09-04T08:00:00" },
+      "shipped": { "start": "2026-09-04T08:05:00", "stop": "2026-09-04T08:05:00" }
+    }
+  },
+  {
+    "id": 111,
+    "so": "SO-7705",
+    "partNumber": "BT-40",
+    "partFamily": "Boot",
+    "quantity": 900,
+    "dueDate": "2026-09-20",
+    "stage": "backlog",
+    "status": "cancelled",
+    "notes": "Customer cancelled the order 2026-09-14.",
+    "phaseLog": { "backlog": { "start": "2026-09-09T08:00:00", "stop": null } }
+  }
+]

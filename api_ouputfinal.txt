@@ -1,0 +1,21 @@
+API for Kanban 
+
+Power Bi for SharePoint
+
+Sql for maintenance 
+
+hold rework cancelled columns (add the rest from dashboard to Kanban index)
+
+Rework depends on the issue for deflash 
+
+Back log for deflash and back log for production - bottlenecks
+
+
+
+
+
+ 
+
+
+
+

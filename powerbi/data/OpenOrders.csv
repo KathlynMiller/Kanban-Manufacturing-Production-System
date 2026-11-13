@@ -1,0 +1,12 @@
+CardNumber,SO_Number,PartNumber,PartFamily,Quantity,DueDate,Stage,Status,Notes
+101,SO-7801,100125060,Housing,5000,2026-09-22,Back Log,Waiting for Raw Material,
+102,SO-7809,M30.008A01,Housing,250,2026-09-19,Production,In Process,
+103,SO-7812,BR-2210,Bracket,3000,2026-09-18,Deflash Queue,Hold,"Waiting on lead sign-off before deflash — flash pattern looked off on first piece."
+104,SO-7818,PC-114,Passive Component,12000,2026-09-17,Deflash,Rework,"Excess flash on batch 2 — sent back for a second pass."
+105,SO-7825,100125060,Housing,8000,2026-09-16,To Do,In Process,
+106,SO-7830,BT-40,Boot,1500,2026-09-15,Final Inspection Queue,In Process,
+107,SO-7791,FK-9,Fastener Kit,850,2026-09-14,Final Inspection,In Process,
+108,SO-7770,BR-2210,Bracket,6200,2026-09-13,Packaging,In Process,
+109,SO-7742,100125060,Housing,4000,2026-09-11,Awaiting Ship,In Process,
+110,SO-7699,PC-114,Passive Component,22000,2026-09-05,Shipped,In Process,
+111,SO-7705,BT-40,Boot,900,2026-09-20,Back Log,Cancelled,"Customer cancelled the order 2026-09-14."

@@ -1,0 +1,477 @@
+<title>Kanban Manufacturing System Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root {
+    --paper: #EAEDE8;
+    --paper-raised: #F5F7F3;
+    --ink: #1B2226;
+    --ink-soft: #4A5459;
+    --steel: #5B6B72;
+    --steel-line: #C3CBC6;
+    --amber: #B96A19;
+    --amber-soft: #F1DEC4;
+    --card-border: #C9D0CA;
+    --shadow: 0 1px 2px rgba(27, 34, 38, 0.08);
+
+    --s1: #3C6E9E;
+    --s2: #2F7C9C;
+    --s3: #268A93;
+    --s4: #279685;
+    --s5: #3B9E72;
+    --s6: #5AA35B;
+    --s7: #7FA23F;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1A1F22;
+      --paper-raised: #22282B;
+      --ink: #E8EBE7;
+      --ink-soft: #A9B2AD;
+      --steel: #8B9A93;
+      --steel-line: #3A4448;
+      --amber: #E0954A;
+      --amber-soft: #3A2F1F;
+      --card-border: #354045;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+      --s1: #6C9BCB;
+      --s2: #4FA7C4;
+      --s3: #3FB2AE;
+      --s4: #3FBFA0;
+      --s5: #5FC08B;
+      --s6: #86C46E;
+      --s7: #A9C25B;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #1A1F22;
+    --paper-raised: #22282B;
+    --ink: #E8EBE7;
+    --ink-soft: #A9B2AD;
+    --steel: #8B9A93;
+    --steel-line: #3A4448;
+    --amber: #E0954A;
+    --amber-soft: #3A2F1F;
+    --card-border: #354045;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+    --s1: #6C9BCB;
+    --s2: #4FA7C4;
+    --s3: #3FB2AE;
+    --s4: #3FBFA0;
+    --s5: #5FC08B;
+    --s6: #86C46E;
+    --s7: #A9C25B;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--steel-line);
+    padding-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  h1 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 0.95;
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  header p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  section h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin: 0 0 1rem;
+  }
+
+  .flow-scroll {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    margin: 0 -0.25rem;
+  }
+
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    min-width: max-content;
+    padding: 0.25rem;
+  }
+
+  .node {
+    width: 210px;
+    background: var(--paper-raised);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 1rem 1.1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    position: relative;
+  }
+
+  .node::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 6px 6px 0 0;
+    background: var(--stage-color);
+  }
+
+  .node-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .node-index {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--stage-color);
+  }
+
+  .node-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .node h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .node p {
+    margin: 0;
+    font-size: 0.83rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    flex-grow: 1;
+  }
+
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    flex-shrink: 0;
+    color: var(--steel);
+    font-size: 1.1rem;
+  }
+
+  .wip {
+    background: var(--paper-raised);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.1rem 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+  }
+
+  .wip-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--amber);
+    background: var(--amber-soft);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .wip-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.28rem 0.6rem;
+    border: 1px solid var(--steel-line);
+    border-radius: 4px;
+    color: var(--ink-soft);
+  }
+
+  .wip-chip.excluded {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  .wip-note {
+    flex-basis: 100%;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 0.3rem;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.85rem 1rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+  }
+
+  .field-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .field-desc {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  footer {
+    border-top: 1px solid var(--steel-line);
+    padding-top: 1.2rem;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+
+  footer strong { color: var(--ink); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .node { transition: transform 0.15s ease; }
+    .node:hover { transform: translateY(-2px); }
+  }
+</style>
+
+<div class="page">
+  <header>
+    <span class="eyebrow">Kanban Manufacturing System &middot; Production Tracking</span>
+    <h1>Kanban Process Flow</h1>
+    <p>How a work order moves across the physical Kanban board on the production floor, from the moment an order is logged to the moment it ships. The confirmed 10-stage digital sequence below is what backs the Power BI data model — every order's <code>Stage</code> value maps to one of those nodes.</p>
+  </header>
+
+  <section>
+    <h2>Physical board &mdash; Back Log &rarr; Completed</h2>
+    <div class="flow-scroll">
+      <div class="flow">
+        <div class="node" style="--stage-color: var(--s1)">
+          <div class="node-top"><span class="node-index">01</span><span class="node-tag">NOT STARTED</span></div>
+          <h3>Back Log</h3>
+          <p>Order received and logged. Not yet scheduled for the floor.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s2)">
+          <div class="node-top"><span class="node-index">02</span><span class="node-tag">QUEUED</span></div>
+          <h3>To Do</h3>
+          <p>Scheduled and queued, ready for production to pick it up.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s3)">
+          <div class="node-top"><span class="node-index">03</span><span class="node-tag">IN PROCESS</span></div>
+          <h3>Production</h3>
+          <p>Part is actively being manufactured on the floor.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s4)">
+          <div class="node-top"><span class="node-index">04</span><span class="node-tag">IN PROCESS</span></div>
+          <h3>Deflash</h3>
+          <p>Finishing pass — excess material is trimmed from the part.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s5)">
+          <div class="node-top"><span class="node-index">05</span><span class="node-tag">IN PROCESS</span></div>
+          <h3>Final Inspection</h3>
+          <p>Checked against spec before it's cleared to ship.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s6)">
+          <div class="node-top"><span class="node-index">06</span><span class="node-tag">IN PROCESS</span></div>
+          <h3>Shipping</h3>
+          <p>Packed and staged, waiting to leave the building.</p>
+        </div>
+        <div class="connector">&rarr;</div>
+
+        <div class="node" style="--stage-color: var(--s7)">
+          <div class="node-top"><span class="node-index">07</span><span class="node-tag">DONE</span></div>
+          <h3>Completed</h3>
+          <p>Shipment confirmed. Order is closed out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Digital-board sequence &mdash; confirmed at the kickoff</h2>
+    <p style="margin:0 0 1rem; font-size:0.85rem; color:var(--ink-soft); max-width:70ch;">This is now the confirmed sequence for the digital board and the Power BI data model &mdash; it reorders Production ahead of To Do, splits Deflash and Final Inspection into a queue plus an active stage, and adds Packaging versus the original physical flow above.</p>
+    <div class="flow-scroll">
+      <div class="flow">
+        <div class="node" style="--stage-color: var(--s1)"><div class="node-top"><span class="node-index">01</span><span class="node-tag">NOT STARTED</span></div><h3>Back Log</h3><p>Order received and logged.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s3)"><div class="node-top"><span class="node-index">02</span><span class="node-tag">IN PROCESS</span></div><h3>Production</h3><p>Moved ahead of To Do in the proposed order.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s4)"><div class="node-top"><span class="node-index">03</span><span class="node-tag">QUEUED</span></div><h3>Deflash Queue</h3><p>Waiting for a Deflash slot &mdash; new stage.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s4)"><div class="node-top"><span class="node-index">04</span><span class="node-tag">IN PROCESS</span></div><h3>Deflash</h3><p>Needs the most attention &mdash; see bottleneck note below.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s2)"><div class="node-top"><span class="node-index">05</span><span class="node-tag">QUEUED</span></div><h3>To Do</h3><p>Now sits after Deflash in the proposed order.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s5)"><div class="node-top"><span class="node-index">06</span><span class="node-tag">QUEUED</span></div><h3>Final Inspection Queue</h3><p>Waiting for an inspection slot &mdash; new stage.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s5)"><div class="node-top"><span class="node-index">07</span><span class="node-tag">IN PROCESS</span></div><h3>Final Inspection</h3><p>Checked against spec.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s6)"><div class="node-top"><span class="node-index">08</span><span class="node-tag">IN PROCESS</span></div><h3>Packaging</h3><p>New stage, not on the physical board today.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s6)"><div class="node-top"><span class="node-index">09</span><span class="node-tag">IN PROCESS</span></div><h3>Awaiting Ship</h3><p>Staged, waiting to leave the building.</p></div>
+        <div class="connector">&rarr;</div>
+        <div class="node" style="--stage-color: var(--s7)"><div class="node-top"><span class="node-index">10</span><span class="node-tag">DONE</span></div><h3>Shipped</h3><p>Shipment confirmed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Statuses that can apply at any stage &mdash; confirmed at kickoff</h2>
+    <div class="wip">
+      <span class="wip-chip" style="border-color:#c9a13b; color:#8a6a1f;">Waiting for Raw Material</span>
+      <span class="wip-chip" style="border-color:#8a5a9a; color:#6b4479;">Rework</span>
+      <span class="wip-chip" style="border-color:#5a6c8a; color:#42536b;">Hold</span>
+      <span class="wip-chip" style="border-color:#8a5044; color:#6b3d33;">Cancelled</span>
+      <span class="wip-note">Rework routes an order back depending on the issue found at <strong>Deflash</strong> &mdash; not a simple forward skip. Operators trigger every stage move manually; there is no automatic system event.</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Timing rules &mdash; confirmed at kickoff</h2>
+    <div class="fields">
+      <div class="field"><span class="field-name">Start / Stop timestamps</span><span class="field-desc">Every phase gets a standardized start and stop timestamp, called out specifically for Deflash.</span></div>
+      <div class="field"><span class="field-name">Cycle-time target</span><span class="field-desc">4&ndash;5 days for a full production run. Longer than that counts as overdue &mdash; a separate signal from missing the due date.</span></div>
+      <div class="field"><span class="field-name">Time in limbo</span><span class="field-desc">Tracks how long an order sits idle *between* phases, not just time spent actively in one.</span></div>
+      <div class="field"><span class="field-name">Bottleneck watch</span><span class="field-desc">Back Log builds up ahead of Deflash and Production &mdash; the two queues to watch first.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What counts as WIP</h2>
+    <div class="wip">
+      <span class="wip-label">WIP Orders measure</span>
+      <span class="wip-chip excluded">Back Log</span>
+      <span class="wip-chip">Production</span>
+      <span class="wip-chip">Deflash Queue</span>
+      <span class="wip-chip">Deflash</span>
+      <span class="wip-chip">To Do</span>
+      <span class="wip-chip">Final Inspection Queue</span>
+      <span class="wip-chip">Final Inspection</span>
+      <span class="wip-chip">Packaging</span>
+      <span class="wip-chip">Awaiting Ship</span>
+      <span class="wip-chip excluded">Shipped</span>
+      <span class="wip-note">Back Log (not started) and Shipped (finished) are excluded — the dashboard's <strong>WIP Orders</strong> DAX measure counts everything actively moving between them.</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Fields tracked per card</h2>
+    <div class="fields">
+      <div class="field">
+        <span class="field-name">Card Number</span>
+        <span class="field-desc">ID so a card can be selected and tracked individually</span>
+      </div>
+      <div class="field">
+        <span class="field-name">SO Number</span>
+        <span class="field-desc">Sales order identifier</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Part Number</span>
+        <span class="field-desc">Manufactured part ID</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Quantity</span>
+        <span class="field-desc">Units on the order line</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Due Date</span>
+        <span class="field-desc">Date the order should ship</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Stage</span>
+        <span class="field-desc">Current node in this flow</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Status</span>
+        <span class="field-desc">Waiting for Raw Material / Rework / Hold / Cancelled / In Process</span>
+      </div>
+      <div class="field">
+        <span class="field-name">Notes</span>
+        <span class="field-desc">Free-text problem notes on the card</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Source:</strong> physical flow reconstructed from photos of Kanban Manufacturing System's corkboard; trigger conditions confirmed at the Phase 1 kickoff (operator-driven, manual). <strong>Digital sequence:</strong> confirmed 2026-09-17 — see Section 3a in <code>RequirementsDocument.md</code>. The Power BI data model (<code>StageOrder.csv</code>, <code>PowerQuery.m</code>, <code>Measures.dax</code>) is built around it.
+  </footer>
+</div>

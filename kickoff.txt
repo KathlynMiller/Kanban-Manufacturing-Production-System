@@ -1,0 +1,110 @@
+Kanban Manufacturing System — Phase 1 Kickoff Notes
+Cleaned up / reorganized by topic on 2026-09-19. These are the raw
+working notes — see powerbi/RequirementsDocument.md for the formal
+write-up these were folded into, and powerbi/DataDictionary.md for the
+data model that came out of them.
+
+------------------------------------------------------------
+ARCHITECTURE
+------------------------------------------------------------
+- API feed for the Kanban board
+- Power BI for reporting, on top of SharePoint
+- SQL behind maintenance data
+
+------------------------------------------------------------
+ROLES & ACCESS
+------------------------------------------------------------
+- Operators — focus on the phases; in charge of moving an order to
+  the next stage
+- Floor supervisors — focus on making the part
+- Executives — use it to discuss/decide what changes need to be made
+- Only Leads get access and permission for now. This is new for them,
+  going from handwork to digital — we don't want to show it to people
+  on the floor yet, to make sure it aligns with the physical Kanban
+  board first
+
+------------------------------------------------------------
+DIGITAL BOARD SEQUENCE
+------------------------------------------------------------
+Back Log | Production | Deflash Queue | Deflash | To Do |
+Final Inspection Queue | Final Inspection | Packaging |
+Awaiting Ship | Shipped
+
+------------------------------------------------------------
+STATUSES (beyond the 7 physical stages)
+------------------------------------------------------------
+- Hold, Rework, Cancelled columns — add these to the Kanban board,
+  matching what's already on the dashboard mock-up
+- Waiting for Raw Materials — new status
+- Rework depends on the specific issue found at Deflash
+- Dashboard status colors: Waiting for Raw Material, In Process,
+  Rework, Cancelled, Delay
+- Deflash needs its own clear Rework/Hold indicator — the stage that
+  needs the most attention
+
+------------------------------------------------------------
+TIMING & CYCLE RULES
+------------------------------------------------------------
+- Timestamp data for the cycles is very crucial
+- Rules for what triggers each cycle/phase still need to be defined
+- Full production should take 4 or 5 days — if it passes that, it's
+  overdue (separate from missing the due date)
+- Track dates for all phases, per material
+- Timeline tracking needed specifically for Deflash, Production, and
+  Final Inspection
+- Flash finish-by dates on screen for Shipping, Production, and
+  Deflash, so it's clear when each has to finish every week
+- Track time in limbo — idle time between phases
+- Start button = timestamp when a phase starts; Stop button =
+  timestamp when it ends. One pair per phase, standardized format
+
+------------------------------------------------------------
+BOTTLENECKS & VOLUME
+------------------------------------------------------------
+- Back Log builds up ahead of Deflash and ahead of Production — these
+  are the two bottlenecks to watch
+- ~10 orders a week is the volume we're designing for
+- Run what's in stock and what material is currently running
+- Lead count for material waiting at Back Log
+
+------------------------------------------------------------
+CARD / BOARD UI FEATURES
+------------------------------------------------------------
+- Select which card number you're currently working on
+- Note section on each card for logging problems with that order
+
+------------------------------------------------------------
+WHY THIS PROJECT MATTERS
+------------------------------------------------------------
+The whole point of the Kanban project is to make sure every order is
+done on time, before its due date — including orders that need
+rework, which need extra attention to stay on time too. Keep the
+workload view concise, not dense.
+
+------------------------------------------------------------
+CHANGE LOG
+------------------------------------------------------------
+2026-09-17 — Kickoff Checklist artifact rebuilt so everything above is
+woven into the actual layout instead of sitting in a separate
+raw-notes list. Added a second stage strip for the digital-board
+columns (Packaging, Deflash/Final Inspection queue splits) under the
+physical one, plus a "Digital Card & Board Design" section covering
+the card selector, start/stop timestamps, time-in-limbo tracking,
+problem notes, the Deflash rework/hold flag, and the production status
+colors as swatches.
+
+2026-09-17 — 10-stage digital sequence confirmed. Power BI data model
+(StageOrder.csv, OpenOrders.csv, PhaseLog.csv, PowerQuery.m,
+Measures.dax, DataDictionary.md) rebuilt around it.
+
+2026-09-17 — Digital board (index.html) wired to load cards directly
+from the same CSVs the Power BI model reads, instead of a separate
+hand-maintained JSON file.
+
+2026-09-19 — These notes cleaned up and reorganized by topic (this
+file). Added a batch-size indicator (10-order target per column) next
+to the Start button — visible warning, not a hard block. Stop now
+finishes the current phase's timer AND moves the card to the next
+stage in one click. Added a "Where this project stands" status panel
+to index.html summarizing what's confirmed, what's built, and what's
+still open, for a clearer read on progress.

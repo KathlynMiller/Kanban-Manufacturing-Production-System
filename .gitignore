@@ -1,0 +1,8 @@
+# Local tool state
+.claude/
+
+# Excluded for NDA / privacy
+Kanban.eml
+Kickoff_Meeting_Notes.pdf
+Manufacturing_PowerBI_Project_Starter_Guide.docx
+p1math.txt

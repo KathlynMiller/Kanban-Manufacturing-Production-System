@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kanban Manufacturing System Digital Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <span class="eyebrow">Kanban Manufacturing System &middot; Prototype &middot; Leads-only access</span>
+    <h1>Digital Kanban Board</h1>
+    <p>A working prototype of the digital board discussed at the Phase 1 kickoff &mdash; card selector, per-phase start/stop timestamps, time-in-limbo tracking, problem notes, and status colors are all wired up below, live against the same data the Power BI report reads.</p>
+  </header>
+
+  <section class="status-panel">
+    <h2>Where this project stands</h2>
+    <div class="status-cols">
+      <div class="status-col">
+        <h3>Confirmed at kickoff</h3>
+        <ul>
+          <li>Role-based views: operators, floor supervisors, executives</li>
+          <li>10-stage digital sequence, locked in 2026-09-17</li>
+          <li>Status field: Hold, Rework, Cancelled, Waiting for Raw Material</li>
+          <li>Leads-only access until validated against the physical board</li>
+        </ul>
+      </div>
+      <div class="status-col">
+        <h3>Built &amp; working now</h3>
+        <ul>
+          <li>Board below reads live from the same CSVs Power BI uses &mdash; one source of truth</li>
+          <li>Per-phase Start/Stop timestamps, cycle-time and time-in-limbo tracking</li>
+          <li>Deflash Rework/Hold flag, problem notes, card selector</li>
+          <li>Batch-size indicator per column (10-order target) <span class="new-badge">NEW</span></li>
+          <li>Stop finishes a phase AND advances the card to the next stage <span class="new-badge">NEW</span></li>
+          <li>Planned Start/End dates on each order, alongside Due date <span class="new-badge">NEW</span></li>
+        </ul>
+      </div>
+      <div class="status-col open">
+        <h3>Still open</h3>
+        <ul>
+          <li>How far back Excel/CSV order history goes</li>
+          <li>Where Part Family comes from</li>
+          <li>Exact Rework-vs-Hold routing rules at Deflash</li>
+          <li>Ownership/timeline for API + SharePoint + SQL build-out</li>
+        </ul>
+      </div>
+    </div>
+    <p class="status-footnote">Full detail in <code>powerbi/RequirementsDocument.md</code> Section 11. Data source: <code>powerbi/data/OpenOrders.csv</code> + <code>PhaseLog.csv</code> &mdash; the same files the Power BI report reads. Edits made on this board only live in this browser tab; there's no write-back to the CSVs.</p>
+  </section>
+
+<div class="toolbar">
+    <label class="selector-label">
+      Currently working on
+      <select id="card-selector"><option value="">— none —</option></select>
+    </label>
+
+    <div class="legend">
+      <span class="legend-item"><span class="dot" style="background:#2f7a52"></span>In Process</span>
+      <span class="legend-item"><span class="dot" style="background:#c9a13b"></span>Waiting for Material</span>
+      <span class="legend-item"><span class="dot" style="background:#8a5a9a"></span>Rework</span>
+      <span class="legend-item"><span class="dot" style="background:#5a6c8a"></span>Hold</span>
+      <span class="legend-item"><span class="dot" style="background:#8a5044"></span>Cancelled</span>
+    </div>
+  </div>
+
+  <form id="add-task-form">
+    <input type="text" id="new-so" placeholder="SO number (e.g. SO-7900)" required>
+    <input type="text" id="new-part-number" placeholder="Part number">
+    <input type="text" id="new-part-family" placeholder="Part family">
+    <input type="number" id="new-quantity" placeholder="Quantity" min="0">
+    <label class="form-date-label">Start date <span class="new-badge">NEW</span><input type="date" id="new-start-date"></label>
+    <label class="form-date-label">End date <span class="new-badge">NEW</span><input type="date" id="new-end-date"></label>
+    <label class="form-date-label">Due date<input type="date" id="new-due-date" required></label>
+    <button type="submit">Add order to Back Log</button>
+  </form>
+
+  <main id="board"></main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+// ============================================================
+// DAX Measures — Kanban Manufacturing System
+// ============================================================
+// How to use in Power BI Desktop:
+//   1. Select the OpenOrders table in the Fields pane
+//   2. Home (or Table Tools) > New Measure
+//   3. Paste one measure at a time (name = the part before " = ")
+// Assumes the relationship OpenOrders[CardNumber] -> PhaseLog[CardNumber]
+// (one-to-many) is set in Model view.
+// ============================================================
+
+// ---------- Volume ----------
+
+// Total number of work order lines currently tracked
+Total Orders = COUNTROWS('OpenOrders')
+
+// Total units across all orders — useful for capacity/volume KPIs
+Total Quantity = SUM('OpenOrders'[Quantity])
+
+// Work-in-process: orders actively moving between Back Log and Shipped
+WIP Orders =
+CALCULATE(
+    [Total Orders],
+    'OpenOrders'[Stage] IN {
+        "Production", "Deflash Queue", "Deflash", "To Do",
+        "Final Inspection Queue", "Final Inspection", "Packaging", "Awaiting Ship"
+    }
+)
+
+// ---------- Due-date tracking ----------
+
+// Orders past their due date that haven't shipped — the single most
+// useful KPI for a Kanban production board
+Overdue Orders =
+CALCULATE(
+    [Total Orders],
+    'OpenOrders'[DueDate] < TODAY(),
+    'OpenOrders'[Stage] <> "Shipped"
+)
+
+// Overdue orders as a share of everything still open (excludes Shipped)
+Percent Overdue =
+VAR OpenOrdersCount =
+    CALCULATE([Total Orders], 'OpenOrders'[Stage] <> "Shipped")
+RETURN
+    DIVIDE([Overdue Orders], OpenOrdersCount)
+
+// Orders due in the next 7 days — an early-warning KPI
+Orders Due This Week =
+CALCULATE(
+    [Total Orders],
+    'OpenOrders'[DueDate] >= TODAY(),
+    'OpenOrders'[DueDate] <= TODAY() + 7,
+    'OpenOrders'[Stage] <> "Shipped"
+)
+
+// On average, how many days away is each open order's due date?
+// Negative = on average, orders are already overdue
+Average Days Until Due =
+CALCULATE(
+    AVERAGEX('OpenOrders', DATEDIFF(TODAY(), 'OpenOrders'[DueDate], DAY)),
+    'OpenOrders'[Stage] <> "Shipped"
+)
+
+// Orders finished — a simple throughput measure
+Shipped Orders = CALCULATE([Total Orders], 'OpenOrders'[Stage] = "Shipped")
+
+// ---------- Status (confirmed at kickoff) ----------
+
+Cancelled Orders = CALCULATE([Total Orders], 'OpenOrders'[Status] = "Cancelled")
+
+On Hold Orders = CALCULATE([Total Orders], 'OpenOrders'[Status] = "Hold")
+
+In Rework Orders = CALCULATE([Total Orders], 'OpenOrders'[Status] = "Rework")
+
+// Bottleneck watch: orders sitting at Back Log waiting on material —
+// confirmed at kickoff as a lead count worth surfacing
+Waiting for Raw Material (Back Log) =
+CALCULATE(
+    [Total Orders],
+    'OpenOrders'[Stage] = "Back Log",
+    'OpenOrders'[Status] = "Waiting for Raw Material"
+)
+
+// Deflash cards flagged Rework or Hold — the visual flag called out at kickoff
+Deflash Flagged Orders = CALCULATE([Total Orders], 'OpenOrders'[IsDeflashFlag] = TRUE)
+
+// ---------- Cycle time & limbo (confirmed at kickoff) ----------
+
+// Target for a full production run is 4-5 days; longer counts as overdue,
+// separate from due-date overdue. Uses each order's earliest logged phase
+// start in PhaseLog as the clock start.
+Cycle Time Overdue =
+VAR CycleTargetDays = 4.5
+VAR OrderStart =
+    ADDCOLUMNS(
+        VALUES('OpenOrders'[CardNumber]),
+        "@FirstPhaseStart", CALCULATE(MIN('PhaseLog'[PhaseStart]))
+    )
+VAR FlaggedCards =
+    FILTER(
+        OrderStart,
+        NOT ISBLANK([@FirstPhaseStart])
+            && DATEDIFF([@FirstPhaseStart], NOW(), HOUR) / 24.0 > CycleTargetDays
+    )
+RETURN
+CALCULATE(
+    [Total Orders],
+    'OpenOrders'[Stage] <> "Shipped",
+    'OpenOrders'[Status] <> "Cancelled",
+    TREATAS(FlaggedCards, 'OpenOrders'[CardNumber])
+)
+
+// Average idle time between phases, across all logged phase transitions.
+// LimboHours is computed per row in Power Query (PowerQuery.m); blank
+// for an order's first logged phase, since there's nothing before it.
+Average Time in Limbo (Hours) = AVERAGE('PhaseLog'[LimboHours])
+
+// Average time actually spent working a phase (excludes idle/limbo time)
+Average Phase Duration (Hours) = AVERAGE('PhaseLog'[PhaseDurationHours])

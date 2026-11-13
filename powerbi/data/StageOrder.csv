@@ -1,0 +1,11 @@
+Stage,SortOrder
+Back Log,1
+Production,2
+Deflash Queue,3
+Deflash,4
+To Do,5
+Final Inspection Queue,6
+Final Inspection,7
+Packaging,8
+Awaiting Ship,9
+Shipped,10
